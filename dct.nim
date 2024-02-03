@@ -1,8 +1,5 @@
 import std/math
 
-
-const threshold: float = 1e-13
-
 ##########################################################################
 
 proc roundToSignificantDigits(value: float, digits: int): float =
@@ -29,6 +26,7 @@ proc transpose(matrix: seq[seq[float]]): seq[seq[float]] =
 
 proc roundDown(n: float): float =
   ## values very close to zero are returned as zero
+  const threshold: float = 1e-13
   if abs(n) < threshold:
     return 0.0
   return n
