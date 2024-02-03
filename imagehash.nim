@@ -258,16 +258,3 @@ proc wHash*(image: Image, scalingFactor: Positive = 4): ImageHash =
   return ImageHash(diff)
 
 #################################################################################
-
-when isMainModule:
-  let imgx = loadImage[ColorRGBU]("/path/to/imagex.jpeg")
-  let imgy = loadImage[ColorRGBU]("/path/to/imagey.png")
-
-  let hx = pHash(imgx)
-  let hy = pHash(imgy)
-  
-  echo hx == hy
-  echo hx - hy
-
-  echo $hx
-  echo $hy
