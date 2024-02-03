@@ -1,4 +1,4 @@
-import std/[algorithm, strutils]
+import std/[algorithm, math, strutils]
 
 import imageman/imageman
 import dct
@@ -71,7 +71,7 @@ proc asArray(image: Image): Matrix[uint8] =
       result[y][x] = image.data[idx].r
 
 
-proc haarWaveletTransform[T](data: Matrix[T]): tuple[LL, LH, HL, HH: Matrix[float]] =
+proc haarWaveletTransform[T](data: Matrix[T], depth: int = 1): tuple[LL, LH, HL, HH: Matrix[float]] =
   ## LL: Low-Low   (approximation)
   ## LH: Low-High  (horizontal detail)
   ## HL: High-Low  (vertical   detail)
@@ -103,7 +103,10 @@ proc haarWaveletTransform[T](data: Matrix[T]): tuple[LL, LH, HL, HH: Matrix[floa
       HL[i][j] = float((a + b - c - d)) / 4.0
       HH[i][j] = float((a - b - c + d)) / 4.0
 
-  return (LL, LH, HL, HH)
+  if depth > 1:
+    return haarWaveletTransform(LL, depth.pred)
+  else:
+    return (LL, LH, HL, HH)
 
 
 proc hex(x: ImageHash): string =
@@ -229,19 +232,30 @@ proc pHash*(image: Image, highFreqFactor: Positive = 4): ImageHash =
   return ImageHash(diff)
 
 
-proc wHash*(image: Image, scalingFactor: Positive = 4): ImageHash =
+proc wHash*(image: Image, scalingFactor: int = 0): ImageHash =
   ## Wavelet Hash: applies wavelet transforms to capture both spatial and frequency details at multiple resolutions,
   ## using wavelet coefficients to generate a hash that balances texture, detail, and layout.
   if not (scalingFactor mod 2 == 0):
     raise newException(ValueError, "scalingFactor must be a power of 2 < smallest image dimension")
+  
+  var imgSize: int
+  if scalingFactor == 0:
+    let imageMinDimension = min(image.width, image.height)
+    let imageNaturalScale = pow(2.0, floor(log2(float(imageMinDimension))))
+    imgSize = max(imageNaturalScale.int, hashSize)
+  else:
+    imgSize = scalingFactor
+  
+  let llMaxLevel = int(log2(imgSize.float))
+  let level = int(log2(hashSize.float))
+  let dwtLevel = llMaxLevel - level
 
-  let imgSize = hashSize * scalingFactor
   var reducedImage = image
   reducedImage.filterGreyscale()
   reducedImage = reducedImage.resizedNN(imgSize, imgSize)
   
   let data = reducedImage.asArray()
-  let waveletTransform = haarWaveletTransform(data)
+  let waveletTransform = haarWaveletTransform(data, dwtLevel)
   let dwtLow = waveletTransform.LL
   let med = median(dwtLow.flatten())
 
