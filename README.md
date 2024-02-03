@@ -1,2 +1,1 @@
-# imagehash-nim
-image hashing algorithms in nim
+Loosley based on [imagehash](https://github.com/JohannesBuchner/imagehash). Provides Average, Difference, Perceptual, and Wavelet hash functions. Comes packaged with [imageman](https://github.com/SolitudeSF/imageman) for basic image support.
