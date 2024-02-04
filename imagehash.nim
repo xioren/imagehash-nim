@@ -137,13 +137,13 @@ proc flatten[T](array2D: Matrix[T]): seq[T] =
       result.add(item)
 
 
-proc sum[T](data: openArray[T]): int =
+proc sumIt[T](data: openArray[T]): int =
   for n in data:
     result.inc(n.int)
 
 
 proc mean[T](data: openArray[T]): float =
-  return data.sum / data.len
+  return data.sumIt / data.len
 
 
 proc median[T](data: openArray[T]): float =
