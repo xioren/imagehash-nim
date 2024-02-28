@@ -93,10 +93,10 @@ proc haarWaveletTransform[T](data: Matrix[T], depth: int = 1): tuple[LL, LH, HL,
   # NOTE: compute Haar wavelet transform
   for i in 0 ..< rows div 2:
     for j in 0 ..< cols div 2:
-      let a = data[i * 2    ][j * 2     ]
-      let b = data[i * 2    ][j * 2 + 1 ]
-      let c = data[i * 2 + 1][j * 2     ]
-      let d = data[i * 2 + 1][j * 2 + 1 ]
+      let a = data[i * 2    ][j * 2    ]
+      let b = data[i * 2    ][j * 2 + 1]
+      let c = data[i * 2 + 1][j * 2    ]
+      let d = data[i * 2 + 1][j * 2 + 1]
 
       LL[i][j] = float((a + b + c + d)) / 4.0
       LH[i][j] = float((a - b + c - d)) / 4.0
