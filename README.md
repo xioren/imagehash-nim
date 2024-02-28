@@ -8,8 +8,7 @@ let hx = pHash(imgx)
 let hy = pHash(imgy)
 
 echo hx == hy
-# NOTE: hamming distance
-echo hx - hy
+echo hx - hy # hamming distance
 
 echo $hx
 echo $hy
